@@ -1,11 +1,19 @@
 from django.shortcuts import render
 from .models import Turtle
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+class TurtleUpdate(UpdateView):
+    model = Turtle
+    fields = ['breed', 'description', 'age']
+
+class TurtleDelete(DeleteView):
+    model = Turtle
+    success_url = '/turtles/'
 
 class TurtleCreate(CreateView):
     model = Turtle
     fields = '__all__'
+    success_url = '/turtles/'
 
 def home(request):
     return render(request, 'home.html')
