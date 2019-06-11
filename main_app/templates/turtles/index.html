@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Turtle List</h1>
+
+{% for turtle in turtles%}
+    <div class="card">
+        <a href="{% url 'detail' turtle.id %}">
+            <div class="card-content">
+                <span class="card-title">{{ turtle.name }}</span>
+                <p>Breed: {{ turtle.breed }}</p>
+                <p>Description: {{ turtle.description }}</p>
+                {% if turtle.age > 0 %}
+                    <p>Age: {{ turtle.age }}</p>
+                {% else %}
+                    <p>Age: Hatchling</p>
+                {% endif %}
+            </div>
+        </a>
+    </div>
+{% endfor %}
+
+{% endblock %}
