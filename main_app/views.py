@@ -1,6 +1,11 @@
 from django.shortcuts import render
 from .models import Turtle
+from django.views.generic.edit import CreateView
 
+
+class TurtleCreate(CreateView):
+    model = Turtle
+    fields = '__all__'
 
 def home(request):
     return render(request, 'home.html')
