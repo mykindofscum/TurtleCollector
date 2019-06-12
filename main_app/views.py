@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Turtle
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import FeedingForm
@@ -14,7 +14,6 @@ class TurtleDelete(DeleteView):
 class TurtleCreate(CreateView):
     model = Turtle
     fields = '__all__'
-    success_url = '/turtles/'
 
 def home(request):
     return render(request, 'home.html')
@@ -32,4 +31,12 @@ def turtles_detail(request, turtle_id):
     return render(request, 'turtles/detail.html', {
          'turtle': turtle, 'feeding_form': feeding_form 
     })
+
+def add_feeding(request, turtle_id):
+    form = FeedingForm(request.POST)
+    if form.is_valid():
+        new_feeding = form.save(commit=False)
+        new_feeding.turtle_id = turtle_id
+        new_feeding.save()
+    return redirect('detail', turtle_id=turtle_id)
     

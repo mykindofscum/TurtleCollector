@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from datetime import date
 
 # Create your models here.
 MEALS = (
@@ -33,5 +34,6 @@ class Feeding(models.Model):
     def __str__(self):
         return f"{self.get_meal_display()} on {self.date}"
 
-        
+    class Meta:
+        ordering = ['-date']
 

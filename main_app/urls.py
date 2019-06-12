@@ -9,4 +9,5 @@ urlpatterns = [
     path('turtles/create/', views.TurtleCreate.as_view(), name='turtles_create'),
     path('turtles/<int:pk>/update/', views.TurtleUpdate.as_view(), name='turtles_update'),
     path('turtles/<int:pk>/delete/', views.TurtleDelete.as_view(), name='turtles_delete'),
+    path('turtles/<int:turtle_id>/add_feeding/', views.add_feeding, name='add_feeding'),
 ]
