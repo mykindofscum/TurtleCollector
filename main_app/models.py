@@ -20,6 +20,9 @@ class Turtle(models.Model):
 
     def get_absolute_url(self):
         return reverse('detail', kwargs={'turtle_id': self.id})
+
+    def fed_for_today(self):
+        return self.feeding_set.filter(date=date.today()).count() >= len(MEALS)
     
 class Feeding(models.Model):
     date = models.DateField('feeding date')
