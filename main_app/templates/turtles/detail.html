@@ -3,21 +3,39 @@
 
 <h1>Turtle Details</h1>
 
-<div class="card">
-  <div class="card-content">
-    <span class="card-title">{{ turtle.name }}</span>
-    <p>Breed: {{ turtle.breed }}</p>
-    <p>Description: {{ turtle.description }}</p>
-    {% if turtle.age > 0 %}
-      <p>Age: {{ turtle.age }}</p>
-    {% else %}
-      <p>Age: Hatchling</p>
-    {% endif %}
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">{{ turtle.name }}</span>
+        <p>Breed: {{ turtle.breed }}</p>
+        <p>Description: {{ turtle.description }}</p>
+        {% if turtle.age > 0 %}
+          <p>Age: {{ turtle.age }}</p>
+        {% else %}
+          <p>Age: Hatchling</p>
+        {% endif %}
+      </div>
+      <div class="card-action">
+        <a href="{% url 'turtles_update' turtle.id %}">Edit</a>
+        <a href="{% url 'turtles_delete' turtle.id %}">Delete</a>
+      </div>
+    </div>
   </div>
-  <div class="card-action">
-    <a href="{% url 'turtles_update' turtle.id %}">Edit</a>
-    <a href="{% url 'turtles_delete' turtle.id %}">Delete</a>
+  <div class="col s6">
+    <table class="striped">
+      <thead>
+        <tr><th>Date</th><th>Meal</th></tr>
+      </thead>
+      <tbody>
+        {% for feeding in turtle.feeding_set.all %}
+          <tr>
+            <td>{{feeding.date}}</td>
+            <td>{{feeding.get_meal_display}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
-
 {% endblock %}
