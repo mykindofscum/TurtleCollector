@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Turtle
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from .forms import FeedingForm
 
 class TurtleUpdate(UpdateView):
     model = Turtle
@@ -27,5 +28,8 @@ def turtles_index(request):
 
 def turtles_detail(request, turtle_id):
     turtle = Turtle.objects.get(id=turtle_id)
-    return render(request, 'turtles/detail.html', { 'turtle': turtle })
+    feeding_form = FeedingForm()
+    return render(request, 'turtles/detail.html', {
+         'turtle': turtle, 'feeding_form': feeding_form 
+    })
     
