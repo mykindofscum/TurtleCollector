@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Turtle, Photo
+from .models import Turtle, Photo, Toy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import FeedingForm
 import uuid
@@ -58,3 +58,21 @@ def add_photo(request, turtle_id):
         except:
             print('An error occurred uploading file to S3')
     return redirect('detail', turtle_id=turtle_id)
+
+class ToyList(ListView):
+    model = Toy
+
+class ToyDetail(CreateView):
+    model = Toy
+
+class ToyCreate(CreateView):
+    model = Toy
+    fields = '__all__'
+
+class ToyUpdate(UpdateView):
+    model = Toy
+    fields = ['name', 'color'
+    
+class ToyDelete(DeleteView):
+    model = Toy
+    success_url = '/toys/'
