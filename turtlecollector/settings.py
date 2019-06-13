@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'sass_processor',
     'main_app',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +52,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'turtlecollector.urls'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
+
+SASS_PRECISION = 8
 
 TEMPLATES = [
     {
@@ -119,3 +128,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'main_app/static/'
