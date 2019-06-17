@@ -17,15 +17,19 @@
     <header class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
-                <ul>
-                    <li><a href="/" class="left brand-logo">&nbsp;&nbsp;TurtleCollector</a></li>
-                </ul>
                 <ul class="right">
+                    <!-- changes below -->
                     <li><a href="{% url 'about' %}">About</a></li>
-                    <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
-                    <li><a href="{% url 'toys_index' %}">View All Toys</a></li>
-                    <li><a href="{% url 'turtles_create' %}">Add a Turtle</a></li>
-                    <li><a href="{% url 'index' %}">View All My Turtles</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
+                        <li><a href="{% url 'toys_index' %}">View All Toys</a></li>
+                        <li><a href="{% url 'turtles_create' %}">Add a Turtle</a></li>
+                        <li><a href="{% url 'index' %}">View All My Turtles</a></li>
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                        <li><a href="{% url 'login' %}">Log In</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
@@ -34,7 +38,7 @@
         {% block content %}
         {% endblock %}
     </main>
-  	 <footer class="page-footer">
+  	<footer class="page-footer">
        <div class="right">All Rights Reserved, &copy; 2019 Turtle Collector &nbsp;</div>
     </footer>
 </body>

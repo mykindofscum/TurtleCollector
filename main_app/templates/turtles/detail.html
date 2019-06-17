@@ -72,7 +72,12 @@
               A <span style="color: {{ toy.color }}">{{ toy.color }}</span> {{ toy.name }}
             </span>
           </div>
-        </div>
+          <div class="card-action">
+            <form action="{% url 'unassoc_toy' turtle.id toy.id %}" method="post">
+                {% csrf_token %}
+              <button type="submit" class="btn">Remove</button>
+            </form>
+          </div>
       {% endfor %}
     {% else %}
       <h5>No Toys</h5>
@@ -89,8 +94,8 @@
             </span>
           </div>
           <div class="card-action">
-            <form action="" method="post">
-              {% csrf_token %}
+            <form action="{% url 'assoc_toy' turtle.id toy.id %}" method="post">
+                {% csrf_token %}
               <button type="submit" class="btn">Add</button>
             </form>
           </div>
@@ -99,7 +104,9 @@
     {% else %}
       <h5>{{turtle.name}} Already Has All Toys Available</h5>
     {% endif %}
+  </div>
 </div>
+
 <script>
   var dateEl = document.getElementById('id_date');
   M.Datepicker.init(dateEl, {

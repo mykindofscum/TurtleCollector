@@ -1,25 +1,47 @@
 from django.shortcuts import render, redirect
-from .models import Turtle, Photo, Toy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .forms import FeedingForm
 import uuid
 import boto3
+from .models import Turtle, Photo, Toy
+from .forms import FeedingForm
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 S3_BASE_URL = 'https://s3-us-west-1.amazonaws.com/'
 BUCKET = 'turtlecollector'
 
-class TurtleUpdate(UpdateView):
+def signup(request):
+    error_message = ''
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
+        else:
+            error_message = 'Invalid sign up - try again'
+    form = UserCreationForm()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'registration/signup.html', context)
+
+class TurtleUpdate(LoginRequiredMixin, UpdateView):
     model = Turtle
     fields = ['breed', 'description', 'age']
 
-class TurtleDelete(DeleteView):
+class TurtleDelete(LoginRequiredMixin, DeleteView):
     model = Turtle
     success_url = '/turtles/'
 
-class TurtleCreate(CreateView):
+class TurtleCreate(LoginRequiredMixin, CreateView):
     model = Turtle
     fields = '__all__'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 def home(request):
     return render(request, 'home.html')
@@ -27,10 +49,12 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+
 def turtles_index(request):
-    turtles = Turtle.objects.all()
+    turtles = Turtle.objects.filter(user=request.user)
     return render(request, 'turtles/index.html', { 'turtles': turtles })
 
+@login_required
 def turtles_detail(request, turtle_id):
     turtle = Turtle.objects.get(id=turtle_id)
     toys_turtle_doesnt_have = Toy.objects.exclude(id__in = turtle.toys.all().values_list('id'))
@@ -39,6 +63,7 @@ def turtles_detail(request, turtle_id):
          'turtle': turtle, 'toys': toys_turtle_doesnt_have, 'feeding_form': feeding_form 
     })
 
+@login_required
 def add_feeding(request, turtle_id):
     form = FeedingForm(request.POST)
     if form.is_valid():
@@ -47,14 +72,7 @@ def add_feeding(request, turtle_id):
         new_feeding.save()
     return redirect('detail', turtle_id=turtle_id)
 
-def unassoc_toy(request, turtle_id, toy_id):
-    Turtle.objects.get(id=turtle_id).toys.remove(toy_id)
-    return redirect('detail', turtle_id=turtle_id)
-
-def assoc_toy(request, turtle_id, toy_id):
-    Turtle.objects.get(id=turtle_id).toys.add(toy_id)
-    return redirect('detail', turtle_id=turtle_id)
-
+@login_required
 def add_photo(request, turtle_id):
     photo_file = request.FILES.get('photo-file', None)
     if photo_file:
@@ -69,20 +87,30 @@ def add_photo(request, turtle_id):
             print('An error occurred uploading file to S3')
     return redirect('detail', turtle_id=turtle_id)
 
-class ToyList(ListView):
+@login_required
+def assoc_toy(request, turtles_id, toy_id):
+    Turtle.objects.get(id=turtles_id).toys.add(toy_id)
+    return redirect('detail', turtles_id)
+
+@login_required
+def unassoc_toy(request, turtles_id, toy_id):
+    Turtle.objects.get(id=turtles_id).toys.remove(toy_id)
+    return redirect('detail', turtles_id)
+
+class ToyList(LoginRequiredMixin, ListView):
     model = Toy
 
-class ToyDetail(CreateView):
+class ToyDetail(LoginRequiredMixin, DetailView):
     model = Toy
 
-class ToyCreate(CreateView):
+class ToyCreate(LoginRequiredMixin, CreateView):
     model = Toy
     fields = '__all__'
 
-class ToyUpdate(UpdateView):
+class ToyUpdate(LoginRequiredMixin, UpdateView):
     model = Toy
     fields = ['name', 'color']
     
-class ToyDelete(DeleteView):
+class ToyDelete(LoginRequiredMixin, DeleteView):
     model = Toy
     success_url = '/toys/'
