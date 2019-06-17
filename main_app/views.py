@@ -37,7 +37,8 @@ class TurtleDelete(LoginRequiredMixin, DeleteView):
 
 class TurtleCreate(LoginRequiredMixin, CreateView):
     model = Turtle
-    fields = '__all__'
+    fields = ['name', 'breed', 'description', 'age']
+    success_url = '/turtles/'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
